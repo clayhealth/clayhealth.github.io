@@ -13,15 +13,12 @@
             'qenpump.com'
         ];
 
+        // Fallback URL for invalid attempts (e.g., your home page)
+        const fallbackUrl = "https://yourdomain.com/error"; 
+
         function getBaseDomain(hostname) {
-            // Split the hostname by dots
             const parts = hostname.split('.');
-            
-            // If the hostname has more than two parts (subdomain present)
-            if (parts.length > 2) {
-                return parts.slice(-2).join('.'); // Extract base domain
-            }
-            return hostname; // If no subdomain, return as is
+            return parts.length > 2 ? parts.slice(-2).join('.') : hostname;
         }
 
         // Retrieve and decode the hash from the URL
@@ -30,20 +27,19 @@
         try {
             // Decode from Base64 safely
             const decodedUrl = atob(encodedHash).trim();
-            
-            // Create a temporary URL object to extract the hostname
             const urlObj = new URL(decodedUrl);
             const decodedDomain = getBaseDomain(urlObj.hostname);
 
             // Validate against allowed base domains
             if (allowedDomains.includes(decodedDomain)) {
-                // Redirect safely
-                window.location.href = decodedUrl;
+                window.location.href = decodedUrl; // Safe redirect
             } else {
-                console.warn('Unrecognized or unsafe redirect URL:', decodedUrl);
+                console.warn('Invalid redirect URL:', decodedUrl);
+                window.location.href = fallbackUrl; // Redirect to fallback
             }
         } catch (error) {
             console.error('Error decoding the URL:', error);
+            window.location.href = fallbackUrl; // Redirect on error
         }
     </script>
 </body>
