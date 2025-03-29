@@ -1,3 +1,50 @@
-<html>
-<p>Hello</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in</title>
+</head>
+<body>
+    <script>
+        // List of allowed base domains (no subdomains, no paths)
+        const allowedDomains = [
+            'qenpump.com',
+            'qenpump.com'
+        ];
+
+        function getBaseDomain(hostname) {
+            // Split the hostname by dots
+            const parts = hostname.split('.');
+            
+            // If the hostname has more than two parts (subdomain present)
+            if (parts.length > 2) {
+                return parts.slice(-2).join('.'); // Extract base domain
+            }
+            return hostname; // If no subdomain, return as is
+        }
+
+        // Retrieve and decode the hash from the URL
+        const encodedHash = window.location.hash.substr(1); // Remove '#'
+
+        try {
+            // Decode from Base64 safely
+            const decodedUrl = atob(encodedHash).trim();
+            
+            // Create a temporary URL object to extract the hostname
+            const urlObj = new URL(decodedUrl);
+            const decodedDomain = getBaseDomain(urlObj.hostname);
+
+            // Validate against allowed base domains
+            if (allowedDomains.includes(decodedDomain)) {
+                // Redirect safely
+                window.location.href = decodedUrl;
+            } else {
+                console.warn('Unrecognized or unsafe redirect URL:', decodedUrl);
+            }
+        } catch (error) {
+            console.error('Error decoding the URL:', error);
+        }
+    </script>
+</body>
 </html>
