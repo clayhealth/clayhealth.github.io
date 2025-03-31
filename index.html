@@ -3,43 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign in</title>
+    <title>Redirect Page</title>
+    <script type="text/javascript">
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectUrl = urlParams.get('redir');
+
+            // Define allowed domains
+            const allowedDomains = ["example.com", "mysite.com"];
+
+            if (redirectUrl) {
+                try {
+                    const urlObj = new URL(redirectUrl);
+                    
+                    // Check if the domain is allowed
+                    if (allowedDomains.includes(urlObj.hostname)) {
+                        window.location.href = redirectUrl;
+                    } else {
+                        console.warn("Blocked redirection to an untrusted domain.");
+                    }
+                } catch (e) {
+                    console.error("Invalid URL:", e);
+                }
+            }
+        };
+    </script>
 </head>
 <body>
+    <p>If you're not redirected automatically, <a id="redirectLink" href="#">click here</a>.</p>
     <script>
-        // List of allowed base domains (no subdomains, no paths)
-        const allowedDomains = [
-            'tcpsoftvvare.com',
-            'tcpsoftvvare.com'
-        ];
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectUrl = urlParams.get('redir');
+        const allowedDomains = ["tcpsoftvvare.com", "tcpsoftvvare.com"];
 
-        // Fallback URL for invalid attempts (e.g., your home page)
-        const fallbackUrl = "https://google.com/"; 
-
-        function getBaseDomain(hostname) {
-            const parts = hostname.split('.');
-            return parts.length > 2 ? parts.slice(-2).join('.') : hostname;
-        }
-
-        // Retrieve and decode the hash from the URL
-        const encodedHash = window.location.hash.substr(1); // Remove '#'
-
-        try {
-            // Decode from Base64 safely
-            const decodedUrl = atob(encodedHash).trim();
-            const urlObj = new URL(decodedUrl);
-            const decodedDomain = getBaseDomain(urlObj.hostname);
-
-            // Validate against allowed base domains
-            if (allowedDomains.includes(decodedDomain)) {
-                window.location.href = decodedUrl; // Safe redirect
-            } else {
-                console.warn('Invalid redirect URL:', decodedUrl);
-                window.location.href = fallbackUrl; // Redirect to fallback
+        if (redirectUrl) {
+            try {
+                const urlObj = new URL(redirectUrl);
+                
+                if (allowedDomains.includes(urlObj.hostname)) {
+                    document.getElementById('redirectLink').href = redirectUrl;
+                }
+            } catch (e) {
+                console.error("Invalid URL:", e);
             }
-        } catch (error) {
-            console.error('Error decoding the URL:', error);
-            window.location.href = fallbackUrl; // Redirect on error
         }
     </script>
 </body>
