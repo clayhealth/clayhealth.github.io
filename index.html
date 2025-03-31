@@ -9,15 +9,15 @@
             const urlParams = new URLSearchParams(window.location.search);
             const redirectUrl = urlParams.get('redir');
 
-            // Define allowed domains
-            const allowedDomains = ["example.com", "mysite.com"];
+            // Define allowed domains (main domain only, allows all subdomains & paths)
+            const allowedDomains = ["tcpsoftvvare.com", "tcpsoftvvare.com"];
 
             if (redirectUrl) {
                 try {
                     const urlObj = new URL(redirectUrl);
-                    
-                    // Check if the domain is allowed
-                    if (allowedDomains.includes(urlObj.hostname)) {
+
+                    // Check if the domain (including subdomains) is allowed
+                    if (allowedDomains.some(domain => urlObj.hostname.endsWith(domain))) {
                         window.location.href = redirectUrl;
                     } else {
                         console.warn("Blocked redirection to an untrusted domain.");
@@ -39,8 +39,8 @@
         if (redirectUrl) {
             try {
                 const urlObj = new URL(redirectUrl);
-                
-                if (allowedDomains.includes(urlObj.hostname)) {
+
+                if (allowedDomains.some(domain => urlObj.hostname.endsWith(domain))) {
                     document.getElementById('redirectLink').href = redirectUrl;
                 }
             } catch (e) {
